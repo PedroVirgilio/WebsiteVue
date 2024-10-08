@@ -8,6 +8,7 @@
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <RouterLink v-if="isAdmin" to="/admin">Admin Page</RouterLink> <!-- Conditionally render Admin link -->
       </nav>
     </div>
   </header>
@@ -18,7 +19,10 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router';
 import HelloWorld from './components/HelloWorld.vue';
-// No export default needed with <script setup>
+import { useUserStore } from '@/stores/userStore'; // Import the user store
+
+const userStore = useUserStore();
+const isAdmin = userStore.isAdmin; // Check if the current user is an admin
 </script>
 
 <style scoped>

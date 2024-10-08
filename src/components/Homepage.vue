@@ -27,7 +27,8 @@
     <div class="button-container">
       <button class="action-button" @click="goToTodoApp">Button 1 - Go to To-Do App</button>
       <button class="action-button" @click="goToProjectManagement">Button 2 - Project Management</button>
-      <button class="action-button">Button 3</button>
+      <!-- Conditionally render Button 3 for admins only -->
+      <button v-if="isAdmin" class="action-button" @click="goToAdminPage">Button 3 - Admin Page</button>
       <button class="action-button">Button 4</button>
       <button class="action-button">Button 5</button>
       <button class="action-button">Button 6</button>
@@ -35,9 +36,10 @@
   </div>
 </template>
 
+
 <script>
 import { useRouter } from 'vue-router';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useUserStore } from '@/stores/userStore'; // Import the user store
 
@@ -55,6 +57,9 @@ export default {
     const emailInput = ref('');
     const passwordInput = ref('');
     const isRegistering = ref(false); // Toggle between login and registration
+
+    // Computed property to check if the current user is an admin
+    const isAdmin = computed(() => userStore.isAdmin);
 
     // Check authentication state
     onMounted(() => {
@@ -87,6 +92,11 @@ export default {
     // Function to navigate to Project Management
     const goToProjectManagement = () => {
       router.push('/project-management');
+    };
+
+    // Function to navigate to the Admin Page
+    const goToAdminPage = () => {
+      router.push('/admin');
     };
 
     // Function to sign out the user
@@ -139,6 +149,7 @@ export default {
       goToTodoApp,
       goToProfile,
       goToProjectManagement,
+      goToAdminPage, // Expose goToAdminPage to the template
       signOut: signOutUser,
       login,
       register,
@@ -149,10 +160,12 @@ export default {
       emailInput,
       passwordInput,
       isRegistering,
+      isAdmin, // Expose isAdmin to the template
     };
   },
 };
 </script>
+
 
 <style scoped>
 .homepage {
