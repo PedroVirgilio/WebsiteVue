@@ -30,8 +30,10 @@
       <div class="column">
         <h3>Feature</h3>
         <ul>
-          <li v-for="feature in selectedProject.features" :key="feature">
-            {{ feature }}
+          <li v-for="feature in selectedProject.features" :key="feature.name">
+            {{ feature.name }}
+            <span v-if="feature.claimedBy"> - Claimed by: {{ feature.claimedBy }}</span>
+            <button @click="claimFeature(feature)" v-if="!feature.claimedBy" class="claim-button">Claim</button>
             <button @click="deleteFeature(feature)" class="delete-button">Delete</button>
           </li>
         </ul>
@@ -43,8 +45,10 @@
       <div class="column">
         <h3>Bug</h3>
         <ul>
-          <li v-for="bug in selectedProject.bugs" :key="bug">
-            {{ bug }}
+          <li v-for="bug in selectedProject.bugs" :key="bug.name">
+            {{ bug.name }}
+            <span v-if="bug.claimedBy"> - Claimed by: {{ bug.claimedBy }}</span>
+            <button @click="claimBug(bug)" v-if="!bug.claimedBy" class="claim-button">Claim</button>
             <button @click="deleteBug(bug)" class="delete-button">Delete</button>
           </li>
         </ul>
@@ -64,6 +68,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import { ref, watch } from 'vue';
@@ -100,7 +105,7 @@ export default {
       // Create the project
       projectStore.createProject(projectName.value, userEmailCurrent);
       // Refresh user projects
-      userProjects.value = projectStore.getProjectsForUser(userEmailCurrent); 
+      userProjects.value = projectStore.getProjectsForUser(userEmailCurrent);
       // Select the newly created project
       selectedProjectName.value = projectName.value; // Automatically select the new project
       onSelectProject(); // Call this function to set selectedProject correctly
@@ -124,11 +129,19 @@ export default {
       newFeature.value = ''; // Clear input
     }
 
+    function claimFeature(feature) {
+      const projectName = selectedProject.value.name;
+      const userEmail = userEmailCurrent; // The email of the current user
+      projectStore.claimFeature(projectName, feature.name, userEmail);
+    }
+
+
     function deleteFeature(feature) {
-      if (confirm(`Are you sure you want to delete the feature "${feature}"?`)) {
-        projectStore.deleteFeature(selectedProject.value.name, feature); // Call the store method to delete the feature
+      if (confirm(`Are you sure you want to delete the feature "${feature.name}"?`)) {
+        projectStore.deleteFeature(selectedProject.value.name, feature.name); // Pass project name and feature name to the store
       }
     }
+
 
     function addBug() {
       if (!newBug.value) return alert('Please enter a bug');
@@ -137,11 +150,19 @@ export default {
       newBug.value = ''; // Clear input
     }
 
+    function claimBug(bug) {
+      const projectName = selectedProject.value.name;
+      const userEmail = userEmailCurrent; // The email of the current user
+      projectStore.claimBug(projectName, bug.name, userEmail);
+    }
+
+
     function deleteBug(bug) {
-      if (confirm(`Are you sure you want to delete the bug "${bug}"?`)) {
-        projectStore.deleteBug(selectedProject.value.name, bug); // Call the store method to delete the bug
+      if (confirm(`Are you sure you want to delete the bug "${bug.name}"?`)) {
+        projectStore.deleteBug(selectedProject.value.name, bug.name); // Pass project name and bug name to the store
       }
     }
+
 
     function associateUser() {
       if (!userEmail.value) return alert('Please enter an email');
@@ -187,8 +208,10 @@ export default {
       deleteProject, // Expose deleteProject function
       addFeature,
       deleteFeature, // Expose deleteFeature function
+      claimFeature, // Expose claimFeature function
       addBug,
       deleteBug, // Expose deleteBug function
+      claimBug, // Expose claimBug function
       associateUser,
       onSelectProject,
       goBack,
@@ -196,6 +219,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .project-management {
@@ -235,5 +259,19 @@ export default {
 
 .delete-button:hover {
   background-color: #c0392b;
+}
+
+.claim-button {
+  background-color: #f39c12;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin-left: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.claim-button:hover {
+  background-color: #e67e22;
 }
 </style>

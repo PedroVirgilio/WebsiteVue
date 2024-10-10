@@ -1,4 +1,3 @@
-// src/stores/projectStore.js
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
@@ -34,17 +33,19 @@ export const useProjectStore = defineStore('projectStore', () => {
   function addFeature(projectName, feature) {
     const project = projects.value.find(p => p.name === projectName);
     if (project) {
-      project.features.push(feature); // Make sure to push the feature to the correct project
+      project.features.push({
+        name: feature,
+        claimedBy: null // Add claimedBy field
+      }); 
       saveProjectsToLocalStorage(); // Save to local storage
     }
   }
 
   // Delete a feature from the selected project
-  function deleteFeature(projectName, feature) {
-    const project = projects.value.find(p => p.name === projectName);
+  function deleteFeature(projectName, featureName) {
+    const project = this.projects.find((project) => project.name === projectName);
     if (project) {
-      project.features = project.features.filter(f => f !== feature); // Remove the feature
-      saveProjectsToLocalStorage(); // Save to local storage
+      project.features = project.features.filter((feature) => feature.name !== featureName);
     }
   }
 
@@ -52,19 +53,22 @@ export const useProjectStore = defineStore('projectStore', () => {
   function addBug(projectName, bug) {
     const project = projects.value.find(p => p.name === projectName);
     if (project) {
-      project.bugs.push(bug); // Make sure to push the bug to the correct project
+      project.bugs.push({
+        name: bug,
+        claimedBy: null // Add claimedBy field
+      }); 
       saveProjectsToLocalStorage(); // Save to local storage
     }
   }
 
   // Delete a bug from the selected project
-  function deleteBug(projectName, bug) {
-    const project = projects.value.find(p => p.name === projectName);
+  function deleteBug(projectName, bugName) {
+    const project = this.projects.find((project) => project.name === projectName);
     if (project) {
-      project.bugs = project.bugs.filter(b => b !== bug); // Remove the bug
-      saveProjectsToLocalStorage(); // Save to local storage
+      project.bugs = project.bugs.filter((bug) => bug.name !== bugName);
     }
   }
+  
 
   // Associate a user with the selected project
   function associateUser(projectName, email) {
@@ -93,6 +97,30 @@ export const useProjectStore = defineStore('projectStore', () => {
     return projects.value.filter(project => project.users.some(user => user.email === email));
   }
 
+  // Claim a feature by setting the claimedBy property to the user's email
+  function claimFeature(projectName, featureName, userEmail) {
+    const project = projects.value.find(p => p.name === projectName);
+    if (project) {
+      const feature = project.features.find(f => f.name === featureName);
+      if (feature && !feature.claimedBy) {  // Ensure the feature hasn't been claimed yet
+        feature.claimedBy = userEmail;
+        saveProjectsToLocalStorage();  // Save changes to local storage or database
+      }
+    }
+  }
+
+  // Claim a bug by setting the claimedBy property to the user's email
+  function claimBug(projectName, bugName, userEmail) {
+    const project = projects.value.find(p => p.name === projectName);
+    if (project) {
+      const bug = project.bugs.find(b => b.name === bugName);
+      if (bug && !bug.claimedBy) {  // Ensure the bug hasn't been claimed yet
+        bug.claimedBy = userEmail;
+        saveProjectsToLocalStorage();  // Save changes to local storage or database
+      }
+    }
+  }
+
   return {
     projects,
     selectedProject,
@@ -104,5 +132,7 @@ export const useProjectStore = defineStore('projectStore', () => {
     associateUser,
     deleteProject,
     getProjectsForUser, // Expose the function to retrieve user-specific projects
+    claimFeature, // Expose claimFeature
+    claimBug, // Expose claimBug
   };
 });
