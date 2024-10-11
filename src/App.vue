@@ -1,6 +1,8 @@
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <img alt="Painful Image" class="logo" src="https://paulbarrs.b-cdn.net/wp-content/uploads/2017/09/painful.jpg"
+      width="250" height="250" />
+
 
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
@@ -18,7 +20,7 @@
 
 <script setup>
 import { RouterLink, RouterView } from 'vue-router';
-import HelloWorld from './components/HelloWorld.vue';
+import HelloWorld from './components/DisplayMsg.vue';
 import { useUserStore } from '@/stores/userStore'; // Import the user store
 
 const userStore = useUserStore();
@@ -30,11 +32,11 @@ header {
   line-height: 1.5;
   max-height: 100vh;
 }
-
 .logo {
-  display: block;
-  margin: 0 auto 2rem;
+  max-width: 100%; /* Makes the image responsive */
+  height: auto; /* Maintains aspect ratio */
 }
+
 
 nav {
   width: 100%;
@@ -87,4 +89,3 @@ nav a:first-of-type {
   }
 }
 </style>
-
