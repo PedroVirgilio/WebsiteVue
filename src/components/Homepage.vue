@@ -36,7 +36,6 @@
   </div>
 </template>
 
-
 <script>
 import { useRouter } from 'vue-router';
 import { ref, onMounted, computed } from 'vue';
@@ -166,7 +165,6 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .homepage {
   display: flex;
@@ -195,9 +193,9 @@ export default {
 }
 
 .toggle-auth {
-  color: blue; /* Set the text color to blue */
-  text-decoration: underline; /* Underline the text */
-  cursor: pointer; /* Change cursor to pointer for better UX */
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .button-container {
@@ -213,9 +211,9 @@ export default {
 }
 
 .user-info {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+  position: fixed; /* Ensure it stays in the top right corner */
+  top: 10px; /* Adjust to top right */
+  right: 10px;
   display: flex;
   align-items: center;
 }

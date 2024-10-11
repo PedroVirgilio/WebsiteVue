@@ -1,21 +1,26 @@
 <template>
-  <header>
-    <img alt="Painful Image" class="logo" src="https://paulbarrs.b-cdn.net/wp-content/uploads/2017/09/painful.jpg"
-      width="250" height="250" />
+  <div class="app-background">
+    <header>
+      <img
+        alt="Painful Image"
+        class="logo"
+        src="https://paulbarrs.b-cdn.net/wp-content/uploads/2017/09/painful.jpg"
+        width="250"
+        height="250"
+      />
 
+      <div class="wrapper">
+        <HelloWorld msg="You did it!" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+        <nav>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink v-if="isAdmin" to="/admin">Admin Page</RouterLink> <!-- Conditionally render Admin link -->
-      </nav>
-    </div>
-  </header>
+          <RouterLink v-if="isAdmin" to="/admin">Admin Page</RouterLink>
+        </nav>
+      </div>
+    </header>
 
-  <RouterView />
+    <RouterView />
+  </div>
 </template>
 
 <script setup>
@@ -28,15 +33,31 @@ const isAdmin = userStore.isAdmin; // Check if the current user is an admin
 </script>
 
 <style scoped>
+html, body {
+  height: 100%; /* Ensure full height */
+  margin: 0; /* Remove default margin */
+}
+
+.app-background {
+  background-image: url('https://cdn.pixabay.com/photo/2017/07/22/08/49/cat-2528119_1280.jpg');
+  background-size: cover; /* Make the background cover the entire screen */
+  background-position: center; /* Center the background image */
+  background-repeat: no-repeat; /* Do not repeat the background image */
+  height: 100vh; /* Full height of the viewport */
+  width: 100vw; /* Full width of the viewport */
+  display: flex;
+  flex-direction: column;
+}
+
 header {
   line-height: 1.5;
   max-height: 100vh;
 }
+
 .logo {
   max-width: 100%; /* Makes the image responsive */
   height: auto; /* Maintains aspect ratio */
 }
-
 
 nav {
   width: 100%;
