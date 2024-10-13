@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
     "firebase": "^10.14.0",
     "pinia": "^2.2.4",
     "vue": "^3.4.29",

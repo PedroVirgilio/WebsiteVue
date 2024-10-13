@@ -29,7 +29,7 @@
       <button class="action-button" @click="goToProjectManagement">Button 2 - Project Management</button>
       <!-- Conditionally render Button 3 for admins only -->
       <button v-if="isAdmin" class="action-button" @click="goToAdminPage">Button 3 - Admin Page</button>
-      <button class="action-button">Button 4</button>
+      <button class="action-button" @click="goToWeatherApp">Button 4 - Weather App</button> 
       <button class="action-button">Button 5</button>
       <button class="action-button">Button 6</button>
     </div>
@@ -143,12 +143,16 @@ export default {
       emailInput.value = ''; // Clear input
       passwordInput.value = ''; // Clear input
     };
+  const goToWeatherApp = () => {
+  router.push('/weather'); 
+};
 
     return {
       goToTodoApp,
       goToProfile,
       goToProjectManagement,
       goToAdminPage, // Expose goToAdminPage to the template
+      goToWeatherApp,
       signOut: signOutUser,
       login,
       register,

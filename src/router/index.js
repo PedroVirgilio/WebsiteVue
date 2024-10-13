@@ -4,7 +4,8 @@ import TodoApp from '../components/TodoApp.vue';
 import LoginPage from '@/components/LoginPage.vue';
 import RegisterPage from '@/components/RegisterPage.vue';
 import ProfilePage from '../components/ProfilePage.vue';
-import AdminPage from '@/views/AdminPage.vue'; // Import your AdminPage component
+import AdminPage from '@/views/AdminPage.vue';
+import WeatherApp from '@/components/WeatherApp.vue';
 
 const routes = [
   {
@@ -34,8 +35,15 @@ const routes = [
     name: 'ProjectManagement',
     component: () => import('@/views/ProjectManagement.vue')
   },
-  { path: '/admin', component: AdminPage, meta: { requiresAuth: true } }, // Add requiresAuth if needed
-  
+  { 
+    path: '/admin', 
+    component: AdminPage, 
+    meta: { requiresAuth: true } 
+  },
+  { 
+    path: '/weather', 
+    component: WeatherApp 
+  },
 ];
 
 const router = createRouter({
