@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="admin-page">
       <h1>Admin Page</h1>
       <input v-model="newAdminEmail" placeholder="Enter new admin email" />
       <button @click="addNewAdmin">Add Admin</button>
@@ -46,7 +46,10 @@
   
   
   <style scoped>
-  /* Your styles for the admin page */
+  
+  .admin-page {
+    text-align: center;
+}
   .return-button {
     margin-top: 20px;
     padding: 10px 15px;

@@ -1,105 +1,150 @@
 <template>
-    <div class="todo-app">
-      <h2>To-Do App</h2>
+  <div class="todo-app">
+    <h2>To-Do App</h2>
+    <div class="input-container">
       <input v-model="newTask" placeholder="Add a new task" />
       <button @click="addTask">Add Task</button>
-  
-      <ul>
-        <li v-for="task in tasks" :key="task.id">
-          {{ task.text }}
-          <button @click="removeTask(task.id)">Remove</button>
-        </li>
-      </ul>
-  
-      <!-- Return button to go back to the homepage -->
-      <button class="return-button" @click="goHome">Return to Home</button>
     </div>
-  </template>
-  
-  <script>
-  import { ref, onMounted } from 'vue'; // Import ref and onMounted
-  import { useRouter } from 'vue-router'; // Import useRouter
-  
-  export default {
-    setup() {
-      const router = useRouter(); // Get the router instance
-      const newTask = ref(''); // Reactive variable for new task input
-      const tasks = ref([]); // Reactive variable for tasks
-  
-      // Load tasks from local storage when the component is mounted
-      onMounted(() => {
-        const storedTasks = JSON.parse(localStorage.getItem('tasks'));
-        if (storedTasks) {
-          tasks.value = storedTasks; // Populate tasks with stored tasks
-        }
-      });
-  
-      // Save tasks to local storage whenever tasks change
-      const saveTasks = () => {
-        localStorage.setItem('tasks', JSON.stringify(tasks.value));
-      };
-  
-      function addTask() {
-        if (newTask.value) {
-          tasks.value.push({ id: Date.now(), text: newTask.value });
-          newTask.value = ''; // Clear the input after adding
-          saveTasks(); // Save tasks to local storage
-        }
+
+    <ul>
+      <li v-for="task in tasks" :key="task.id">
+        <!-- Apply the completed class only to the task text -->
+        <span :class="{ completed: task.completed }">{{ task.text }}</span>
+        <div class="task-buttons">
+          <button @click="completeTask(task.id)">
+            {{ task.completed ? "Undo" : "Complete" }}
+          </button>
+          <button class="remove-button" @click="removeTask(task.id)">Remove</button>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Return button to go back to the homepage -->
+    <button class="return-button" @click="goHome">Return to Home</button>
+  </div>
+</template>
+
+<script>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+export default {
+  setup() {
+    const router = useRouter();
+    const newTask = ref('');
+    const tasks = ref([]);
+
+    onMounted(() => {
+      const storedTasks = JSON.parse(localStorage.getItem('tasks'));
+      if (storedTasks) {
+        tasks.value = storedTasks;
       }
-  
-      function removeTask(taskId) {
-        tasks.value = tasks.value.filter(task => task.id !== taskId);
-        saveTasks(); // Save updated tasks to local storage
+    });
+
+    const saveTasks = () => {
+      localStorage.setItem('tasks', JSON.stringify(tasks.value));
+    };
+
+    function addTask() {
+      if (newTask.value) {
+        tasks.value.push({ id: Date.now(), text: newTask.value, completed: false });
+        newTask.value = '';
+        saveTasks();
       }
-  
-      function goHome() {
-        router.push('/'); // Navigate back to the homepage
+    }
+
+    function removeTask(taskId) {
+      tasks.value = tasks.value.filter(task => task.id !== taskId);
+      saveTasks();
+    }
+
+    function completeTask(taskId) {
+      const task = tasks.value.find(task => task.id === taskId);
+      if (task) {
+        task.completed = !task.completed;
+        saveTasks();
       }
+    }
+
+    function goHome() {
+      router.push('/');
+    }
+
+    return {
+      newTask,
+      tasks,
+      addTask,
+      removeTask,
+      completeTask,
+      goHome,
+    };
+  },
+};
+</script>
+
   
-      return {
-        newTask,
-        tasks,
-        addTask,
-        removeTask,
-        goHome,
-      };
-    },
-  };
-  </script>
-  
-  <style scoped>
-  .todo-app {
-    text-align: center;
-  }
-  
-  input {
-    margin-right: 10px;
-  }
-  
-  .return-button {
-    margin-top: 20px; /* Add some spacing */
-    padding: 10px 15px; /* Button styling */
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  ul {
-    list-style-type: none; /* Remove default list styles */
-    padding: 0; /* Remove padding */
-  }
-  
-  li {
-    display: flex; /* Use flexbox for alignment */
-    justify-content: space-between; /* Space between text and button */
-    align-items: center; /* Center vertically */
-    margin: 10px 0; /* Space between list items */
-  }
-  
-  .remove-button {
-    width: 80px; /* Set a fixed width for remove buttons */
-    padding: 5px; /* Adjust padding as needed */
-    cursor: pointer;
-  }
-  </style>
-  
-  
+<style scoped>
+.todo-app {
+  text-align: center;
+}
+
+.input-container {
+  margin-bottom: 20px;
+}
+
+input {
+  margin-right: 10px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 5px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: red; /* Completed task text will be red */
+}
+
+.task-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  cursor: pointer;
+}
+
+.remove-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.return-button {
+  margin-top: 20px;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+</style>
