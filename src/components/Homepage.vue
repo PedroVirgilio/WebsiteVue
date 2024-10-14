@@ -30,7 +30,7 @@
       <!-- Conditionally render Button 3 for admins only -->
       <button v-if="isAdmin" class="action-button" @click="goToAdminPage">Button 3 - Admin Page</button>
       <button class="action-button" @click="goToWeatherApp">Button 4 - Weather App</button> 
-      <button class="action-button">Button 5</button>
+      <button class="action-button" @click="goToExpenseTracker">Button 5: Expense Tracker</button>
       <button class="action-button">Button 6</button>
     </div>
   </div>
@@ -97,6 +97,7 @@ export default {
     const goToAdminPage = () => {
       router.push('/admin');
     };
+    
 
     // Function to sign out the user
     const signOutUser = async () => {
@@ -147,12 +148,17 @@ export default {
   router.push('/weather'); 
 };
 
+const goToExpenseTracker = () => {
+  router.push('/expense-tracker');
+};
+
     return {
       goToTodoApp,
       goToProfile,
       goToProjectManagement,
       goToAdminPage, // Expose goToAdminPage to the template
       goToWeatherApp,
+      goToExpenseTracker,
       signOut: signOutUser,
       login,
       register,

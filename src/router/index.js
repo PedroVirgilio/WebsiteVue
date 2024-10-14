@@ -6,6 +6,7 @@ import RegisterPage from '@/components/RegisterPage.vue';
 import ProfilePage from '../components/ProfilePage.vue';
 import AdminPage from '@/views/AdminPage.vue';
 import WeatherApp from '@/components/WeatherApp.vue';
+import ExpenseTracker from '../components/ExpenseTracker.vue';
 
 const routes = [
   {
@@ -43,6 +44,11 @@ const routes = [
   { 
     path: '/weather', 
     component: WeatherApp 
+  },
+  {
+    path: '/expense-tracker',
+    name: 'ExpenseTracker',
+    component: ExpenseTracker,
   },
 ];
 
