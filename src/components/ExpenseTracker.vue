@@ -30,7 +30,7 @@
     <h3>History</h3>
     <ul id="list" class="list">
       <li
-        v-for="transaction in transactionStore.transactions" 
+        v-for="transaction in userTransactions" 
         :key="transaction.id"
         :class="transaction.amount < 0 ? 'minus' : 'plus'"
       >
@@ -46,66 +46,53 @@
 import { ref, computed, onMounted } from 'vue'; 
 import { useTransactionStore } from '@/stores/transactionStore';
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/userStore'; // Assuming you have a user store
 
 export default {
   setup() {
     const transactionStore = useTransactionStore();
+    const userStore = useUserStore(); // Get the user store to access the current user
     const newTransactionDescription = ref('');
     const newTransactionAmount = ref(0);
     const router = useRouter();
 
-    const income = computed(() =>
-      transactionStore.transactions
+    const userEmail = computed(() => userStore.email); // Get the logged-in user's email
+
+    const userTransactions = computed(() => 
+      transactionStore.transactions.filter(transaction => transaction.user === userEmail.value)
+    );
+
+    const income = computed(() => 
+      userTransactions.value
         .filter(transaction => transaction.amount > 0)
         .reduce((acc, transaction) => acc + transaction.amount, 0)
     );
 
-    const expenses = computed(() =>
-      transactionStore.transactions
+    const expenses = computed(() => 
+      userTransactions.value
         .filter(transaction => transaction.amount < 0)
         .reduce((acc, transaction) => acc + Math.abs(transaction.amount), 0)
     );
 
     const handleAddTransaction = () => {
       if (newTransactionDescription.value && newTransactionAmount.value) {
-        transactionStore.addTransaction(newTransactionDescription.value, newTransactionAmount.value);
+        transactionStore.addTransaction(newTransactionDescription.value, newTransactionAmount.value, userEmail.value);
         newTransactionDescription.value = '';
         newTransactionAmount.value = 0;
-        saveDataToLocalStorage(); // Save data after adding a transaction
       }
     };
 
     const deleteTransaction = (id) => {
-      transactionStore.deleteTransaction(id);
-      saveDataToLocalStorage(); // Save data after deleting a transaction
+      transactionStore.deleteTransaction(id, userEmail.value);
     };
 
     const goBack = () => {
       router.push('/'); 
     };
 
-    // Load data from local storage
-    const loadDataFromLocalStorage = () => {
-      const storedTransactions = localStorage.getItem('transactions');
-      if (storedTransactions) {
-        transactionStore.transactions = JSON.parse(storedTransactions);
-      }
-
-      const storedBalance = localStorage.getItem('balance');
-      if (storedBalance) {
-        transactionStore.balance = JSON.parse(storedBalance);
-      }
-    };
-
-    // Save data to local storage
-    const saveDataToLocalStorage = () => {
-      localStorage.setItem('transactions', JSON.stringify(transactionStore.transactions));
-      localStorage.setItem('balance', JSON.stringify(transactionStore.balance));
-    };
-
     // Fetch transactions when the component is mounted
     onMounted(() => {
-      loadDataFromLocalStorage(); // Load data when component mounts
+      transactionStore.loadTransactionsFromLocalStorage(userEmail.value);
     });
 
     return {
@@ -114,6 +101,7 @@ export default {
       newTransactionAmount,
       income,
       expenses,
+      userTransactions,
       handleAddTransaction,
       deleteTransaction,
       goBack,
@@ -121,7 +109,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .expense-tracker {
