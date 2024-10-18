@@ -6,27 +6,38 @@
       <p>{{ user.email }}</p>
     </div>
 
-    <div>
-      <label for="currentPassword">Current Password:</label>
-      <input type="password" id="currentPassword" v-model="currentPassword" placeholder="Enter your current password" />
-    </div>
+    <!-- Button to toggle password change form -->
+    <button @click="togglePasswordChange" class="toggle-password-btn">Change Password</button>
 
-    <div>
-      <label for="profilePicture">Profile Picture:</label>
-      <input type="file" id="profilePicture" @change="updateProfilePicture" />
+    <!-- Show password fields only when changePasswordVisible is true -->
+    <div v-if="changePasswordVisible">
+      <div>
+        <label for="currentPassword">Current Password:</label>
+        <input type="password" id="currentPassword" v-model="currentPassword" placeholder="Enter your current password" />
+      </div>
+
+      <div>
+        <label for="newPassword">New Password:</label>
+        <input type="password" id="newPassword" v-model="newPassword" placeholder="Enter your new password" />
+      </div>
+
+      <button @click="updatePassword">Update Password</button>
     </div>
 
     <button @click="updateProfile">Update Profile</button>
     <button @click="goBack">Return to Homepage</button>
+
+    <!-- Delete Account Button -->
+    <button @click="confirmDeleteAccount" class="delete-account-btn">Delete Account</button>
   </div>
 </template>
 
 <script>
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
-import { getAuth, updateProfile } from 'firebase/auth';
+import { getAuth, updatePassword, signInWithEmailAndPassword, updateProfile, deleteUser } from 'firebase/auth';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { useUserStore } from '@/stores/userStore'; // Import the user store
+import { useUserStore } from '@/stores/userStore';
 
 export default {
   name: 'ProfilePage',
@@ -36,31 +47,34 @@ export default {
     const user = auth.currentUser;
     const profilePictureUrl = ref('https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png');
     const currentPassword = ref('');
-    const userStore = useUserStore(); // Use the user store
+    const newPassword = ref('');
+    const changePasswordVisible = ref(false); // Flag to control visibility of password change form
+    const userStore = useUserStore();
 
     // Load user profile picture if available
     if (user && user.photoURL) {
       profilePictureUrl.value = user.photoURL;
     }
 
+    // Toggle the visibility of the password change form
+    function togglePasswordChange() {
+      changePasswordVisible.value = !changePasswordVisible.value;
+    }
+
     // Update profile picture
     async function updateProfilePicture(event) {
       const file = event.target.files[0];
       if (file) {
-        const storage = getStorage(); // Initialize Firebase Storage
-        const profilePicRef = storageRef(storage, `profilePictures/${user.uid}`); // Reference to where the image will be stored
+        const storage = getStorage();
+        const profilePicRef = storageRef(storage, `profilePictures/${user.uid}`);
 
         try {
-          // Upload the image
           await uploadBytes(profilePicRef, file);
-          // Get the image URL
           const downloadURL = await getDownloadURL(profilePicRef);
 
-          // Update the profile picture URL in Firebase Authentication
           await updateProfile(user, { photoURL: downloadURL });
-          // Update the state in the user store
-          userStore.updateProfilePicture(downloadURL); // Update the picture in the store
-          profilePictureUrl.value = downloadURL; 
+          userStore.updateProfilePicture(downloadURL);
+          profilePictureUrl.value = downloadURL;
           alert('Profile picture updated successfully');
         } catch (error) {
           alert(`Failed to update profile picture: ${error.message}`);
@@ -70,6 +84,40 @@ export default {
       }
     }
 
+    // Update password
+    const updatePasswordHandler = async () => {
+      if (!currentPassword.value || !newPassword.value) {
+        alert('Please fill in both the current and new passwords.');
+        return;
+      }
+
+      try {
+        const credential = await signInWithEmailAndPassword(auth, user.email, currentPassword.value);
+        await updatePassword(credential.user, newPassword.value);
+        alert('Password updated successfully.');
+        changePasswordVisible.value = false; // Hide the form after successful update
+      } catch (error) {
+        alert(`Failed to update password: ${error.message}`);
+      }
+    };
+
+    // Confirm and delete user account
+    const confirmDeleteAccount = () => {
+      if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        deleteAccount();
+      }
+    };
+
+    const deleteAccount = async () => {
+      try {
+        await deleteUser(user);
+        alert('Your account has been successfully deleted.');
+        router.push('/');
+      } catch (error) {
+        alert(`Failed to delete account: ${error.message}`);
+      }
+    };
+
     // Navigate back to the homepage
     function goBack() {
       router.push('/');
@@ -77,10 +125,15 @@ export default {
 
     return {
       updateProfilePicture,
+      confirmDeleteAccount,
+      updatePassword: updatePasswordHandler,
+      togglePasswordChange,
       goBack,
       user,
       profilePictureUrl,
       currentPassword,
+      newPassword,
+      changePasswordVisible, // Expose the flag
     };
   },
 };
@@ -114,5 +167,20 @@ input {
 
 button {
   margin: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.delete-account-btn {
+  background-color: #e63946;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.delete-account-btn:hover {
+  background-color: #d32f2f;
 }
 </style>

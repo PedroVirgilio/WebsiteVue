@@ -1,12 +1,23 @@
 @import './base.css';
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+/* Global styles for html and body */
+html, body {
+  margin: 0; /* Ensure no default margins */
+  padding: 0; /* Ensure no padding */
+  width: 100%; /* Full width */
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  color: var(--color-text);
+  background: var(--color-background);
 }
 
+/* Main app styling */
+#app {
+  width: 100%; /* Full width of the viewport */
+  padding: 0; /* Set initial padding to 0 for testing */
+  box-sizing: border-box; /* Include padding in total width */
+}
+
+/* Link styles */
 a,
 .green {
   text-decoration: none;
@@ -15,21 +26,25 @@ a,
   padding: 3px;
 }
 
+/* Hover effect */
 @media (hover: hover) {
   a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);
   }
 }
 
+/* Styles for larger screens */
 @media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
+  html, body {
+    margin: 0; /* Ensure no default margins */
+    padding: 0; /* Ensure no padding */
+    width: 100%; /* Full width */
+    overflow-x: hidden; /* Prevent horizontal scroll */
   }
-
+  
   #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    width: 100%; /* Full width of the viewport */
+    padding: 0;
+    box-sizing: border-box; /* Include padding in total width */
   }
 }

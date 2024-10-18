@@ -13,7 +13,6 @@
         <HelloWorld msg="You did it!" />
 
         <nav>
-
           <RouterLink v-if="isAdmin" to="/admin">Admin Page</RouterLink>
         </nav>
       </div>
@@ -36,6 +35,7 @@ const isAdmin = userStore.isAdmin; // Check if the current user is an admin
 html, body {
   height: 100%; /* Ensure full height */
   margin: 0; /* Remove default margin */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .app-background {
@@ -43,10 +43,11 @@ html, body {
   background-size: cover; /* Make the background cover the entire screen */
   background-position: center; /* Center the background image */
   background-repeat: no-repeat; /* Do not repeat the background image */
-  height: 100vh; /* Full height of the viewport */
+  min-height: 100vh; /* Full height of the viewport */
   width: 100vw; /* Full width of the viewport */
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* Prevent scrolling if there's unwanted overflow */
 }
 
 header {
@@ -57,6 +58,12 @@ header {
 .logo {
   max-width: 100%; /* Makes the image responsive */
   height: auto; /* Maintains aspect ratio */
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 nav {
