@@ -1,8 +1,5 @@
 <template>
   <div class="project-management">
-    <!-- Return button -->
-    <button @click="goBack" class="return-button">Return to Home</button>
-
     <!-- Project selection -->
     <div>
       <label for="projectSelect">Select Project:</label>
@@ -21,11 +18,6 @@
     </div>
 
     <div class="columns" v-if="selectedProject">
-      <!-- Delete project button -->
-      <div class="column">
-        <button @click="deleteProject" class="delete-button">Delete Project</button>
-      </div>
-
       <!-- Feature column -->
       <div class="column">
         <h3>Feature</h3>
@@ -65,6 +57,12 @@
         <input v-model="userEmail" placeholder="Enter user email to associate" />
         <button @click="associateUser">Add User</button>
       </div>
+    </div>
+
+    <!-- Buttons container -->
+    <div class="button-container">
+      <button @click="deleteProject" class="delete-project-button">Delete Project</button>
+      <button @click="goBack" class="return-button">Return to Home</button>
     </div>
   </div>
 </template>
@@ -222,56 +220,57 @@ export default {
 
 
 <style scoped>
-.project-management {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+.button-container {
+  text-align: center; /* Center buttons horizontally */
+  margin-top: 20px; /* Space above buttons */
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically */
+  align-items: center; /* Center align items */
 }
 
-.column {
-  border: 1px solid #ddd;
-  padding: 10px;
+.delete-project-button {
+  padding: 10px 20px;
+  background-color: red; /* Red background for delete button */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px; /* Space between the delete button and return button */
+}
+
+.delete-project-button:hover {
+  background-color: darkred; /* Darker red on hover */
 }
 
 .return-button {
-  background-color: #3498db;
+  padding: 10px 20px;
+  background-color: #007bff; /* Blue background for return button */
   color: white;
-  padding: 10px;
-  margin-bottom: 20px;
-  cursor: pointer;
   border: none;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 .return-button:hover {
-  background-color: #2980b9;
+  background-color: #0056b3; /* Darker blue on hover */
 }
 
-.delete-button {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  margin-left: 10px;
-  cursor: pointer;
-  border-radius: 5px;
+.column {
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center items horizontally */
 }
 
-.delete-button:hover {
-  background-color: #c0392b;
+.column ul {
+  list-style-type: none; /* Remove default list styling */
+  padding: 0; /* Remove default padding */
+  text-align: center; /* Center text inside the list */
+  width: 100%; /* Ensure the list takes full width for centering */
 }
 
-.claim-button {
-  background-color: #f39c12;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  margin-left: 10px;
-  cursor: pointer;
-  border-radius: 5px;
+.column li {
+  margin: 5px 0; /* Space between list items */
 }
 
-.claim-button:hover {
-  background-color: #e67e22;
-}
+
 </style>

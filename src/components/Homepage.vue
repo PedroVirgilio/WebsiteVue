@@ -25,12 +25,12 @@
 
     <!-- Action buttons -->
     <div class="button-container">
-      <button class="action-button" @click="goToTodoApp">Button 1 - Go to To-Do App</button>
-      <button class="action-button" @click="goToProjectManagement">Button 2 - Project Management</button>
+      <button class="action-button" @click="goToTodoApp">Go to To-Do App</button>
+      <button class="action-button" @click="goToProjectManagement">Project Management</button>
       <!-- Conditionally render Button 3 for admins only -->
-      <button v-if="isAdmin" class="action-button" @click="goToAdminPage">Button 3 - Admin Page</button>
-      <button class="action-button" @click="goToWeatherApp">Button 4 - Weather App</button> 
-      <button class="action-button" @click="goToExpenseTracker">Button 5: Expense Tracker</button>
+      <button v-if="isAdmin" class="action-button" @click="goToAdminPage">Admin Page</button>
+      <button class="action-button" @click="goToWeatherApp">Weather App</button> 
+      <button class="action-button" @click="goToExpenseTracker">Expense Tracker</button>
       <!--<button class="action-button">Button 6</button>-->
     </div>
   </div>

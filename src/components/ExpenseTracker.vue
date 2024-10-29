@@ -139,4 +139,11 @@ export default {
 .money.minus {
   color: red;
 }
+
+.list {
+  list-style-type: none; /* Remove default list bullets */
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
+}
 </style>
+
