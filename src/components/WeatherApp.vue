@@ -34,7 +34,7 @@ const weather = ref(null);
 const forecast = ref(null);
 const error = ref(null);
 const loading = ref(false); // Loading state
-const apiKey = '73423e2869786d72f8332d6d6b79d737';
+const apiKey = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
 const lat = ref(null);
 const lon = ref(null);
 const router = useRouter();
@@ -67,6 +67,7 @@ const fetchWeather = async () => {
         loading.value = false; // End loading
     }
 };
+
 
 // Filter forecast to show only today's and tomorrow's data
 const filteredForecast = computed(() => {

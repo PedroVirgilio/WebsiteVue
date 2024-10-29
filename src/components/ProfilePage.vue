@@ -6,35 +6,40 @@
       <p>{{ user.email }}</p>
     </div>
 
-    <!-- Button to toggle password change form -->
-    <button @click="togglePasswordChange" class="toggle-password-btn">Change Password</button>
+    <!-- Change Profile Picture Section -->
+    <div class="change-picture">
+      <label class="custom-file-upload button">
+        Change Profile Picture
+        <input type="file" @change="updateProfilePicture" />
+      </label>
+      <p v-if="fileSelectedMessage && !isPictureSelected">{{ fileSelectedMessage }}</p>
+    </div>
 
-    <!-- Show password fields only when changePasswordVisible is true -->
-    <div v-if="changePasswordVisible">
+    <!-- Change Password -->
+    <button @click="togglePasswordChange" class="button">Change Password</button>
+
+    <div v-if="changePasswordVisible" class="password-section">
       <div>
         <label for="currentPassword">Current Password:</label>
-        <input type="password" id="currentPassword" v-model="currentPassword" placeholder="Enter your current password" />
+        <input type="password" id="currentPassword" v-model="currentPassword" placeholder="Enter current password" />
       </div>
 
       <div>
         <label for="newPassword">New Password:</label>
-        <input type="password" id="newPassword" v-model="newPassword" placeholder="Enter your new password" />
+        <input type="password" id="newPassword" v-model="newPassword" placeholder="Enter new password" />
       </div>
 
-      <button @click="updatePassword">Update Password</button>
+      <button @click="updatePassword" class="button">Update Password</button>
     </div>
 
-    <button @click="updateProfile">Update Profile</button>
-    <button @click="goBack">Return to Homepage</button>
-
-    <!-- Delete Account Button -->
-    <button @click="confirmDeleteAccount" class="delete-account-btn">Delete Account</button>
+    <button @click="goBack" class="button">Return to Homepage</button>
+    <button @click="confirmDeleteAccount" class="button delete-account-btn">Delete Account</button>
   </div>
 </template>
 
 <script>
-import { useRouter } from 'vue-router';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { getAuth, updatePassword, signInWithEmailAndPassword, updateProfile, deleteUser } from 'firebase/auth';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useUserStore } from '@/stores/userStore';
@@ -45,33 +50,29 @@ export default {
     const router = useRouter();
     const auth = getAuth();
     const user = auth.currentUser;
-    const profilePictureUrl = ref('https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png');
-    const currentPassword = ref('');
-    const newPassword = ref('');
-    const changePasswordVisible = ref(false); // Flag to control visibility of password change form
     const userStore = useUserStore();
 
-    // Load user profile picture if available
-    if (user && user.photoURL) {
-      profilePictureUrl.value = user.photoURL;
-    }
+    const profilePictureUrl = ref(user.photoURL || 'https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png');
+    const currentPassword = ref('');
+    const newPassword = ref('');
+    const changePasswordVisible = ref(false);
+    const fileSelectedMessage = ref('No file selected');
+    const isPictureSelected = ref(false);
 
-    // Toggle the visibility of the password change form
-    function togglePasswordChange() {
+    const togglePasswordChange = () => {
       changePasswordVisible.value = !changePasswordVisible.value;
-    }
+    };
 
-    // Update profile picture
-    async function updateProfilePicture(event) {
+    const updateProfilePicture = async (event) => {
       const file = event.target.files[0];
       if (file) {
         const storage = getStorage();
         const profilePicRef = storageRef(storage, `profilePictures/${user.uid}`);
+        isPictureSelected.value = true; // Hide message after file is selected
 
         try {
           await uploadBytes(profilePicRef, file);
           const downloadURL = await getDownloadURL(profilePicRef);
-
           await updateProfile(user, { photoURL: downloadURL });
           userStore.updateProfilePicture(downloadURL);
           profilePictureUrl.value = downloadURL;
@@ -79,61 +80,58 @@ export default {
         } catch (error) {
           alert(`Failed to update profile picture: ${error.message}`);
         }
-      } else {
-        alert('Please select a file to upload.');
       }
-    }
+    };
 
-    // Update password
-    const updatePasswordHandler = async () => {
+    const updatePassword = async () => {
       if (!currentPassword.value || !newPassword.value) {
         alert('Please fill in both the current and new passwords.');
         return;
       }
 
       try {
-        const credential = await signInWithEmailAndPassword(auth, user.email, currentPassword.value);
-        await updatePassword(credential.user, newPassword.value);
+        await signInWithEmailAndPassword(auth, user.email, currentPassword.value);
+        await updatePassword(user, newPassword.value);
         alert('Password updated successfully.');
-        changePasswordVisible.value = false; // Hide the form after successful update
+        changePasswordVisible.value = false;
       } catch (error) {
         alert(`Failed to update password: ${error.message}`);
       }
     };
 
-    // Confirm and delete user account
     const confirmDeleteAccount = () => {
       if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-        deleteAccount();
+        deleteUserAccount();
       }
     };
 
-    const deleteAccount = async () => {
+    const deleteUserAccount = async () => {
       try {
         await deleteUser(user);
-        alert('Your account has been successfully deleted.');
+        alert('Account successfully deleted.');
         router.push('/');
       } catch (error) {
         alert(`Failed to delete account: ${error.message}`);
       }
     };
 
-    // Navigate back to the homepage
-    function goBack() {
+    const goBack = () => {
       router.push('/');
-    }
+    };
 
     return {
-      updateProfilePicture,
-      confirmDeleteAccount,
-      updatePassword: updatePasswordHandler,
-      togglePasswordChange,
-      goBack,
-      user,
       profilePictureUrl,
+      user,
       currentPassword,
       newPassword,
-      changePasswordVisible, // Expose the flag
+      changePasswordVisible,
+      fileSelectedMessage,
+      isPictureSelected,
+      togglePasswordChange,
+      updateProfilePicture,
+      updatePassword,
+      confirmDeleteAccount,
+      goBack,
     };
   },
 };
@@ -146,41 +144,51 @@ export default {
   align-items: center;
 }
 
-h2 {
+.user-info, .change-picture, .password-section {
   margin-bottom: 20px;
+  text-align: center;
 }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  margin-top: 10px;
-}
-
-input {
-  margin-bottom: 20px;
-}
-
-button {
-  margin: 10px;
+/* Uniform button styling */
+.button {
+  width: 200px;
   padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.delete-account-btn {
-  background-color: #e63946;
+  margin: 10px;
+  text-align: center;
+  background-color: #007bff;
   color: white;
   border: none;
-  padding: 10px 20px;
+  border-radius: 4px;
   cursor: pointer;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+/* Specific style for the custom file upload label */
+.custom-file-upload {
+  display: inline-block;
+}
+
+/* Additional styling for the delete account button */
+.delete-account-btn {
+  background-color: #e63946;
 }
 
 .delete-account-btn:hover {
   background-color: #d32f2f;
+}
+
+input[type="file"] {
+  display: none; /* Hide the default file input */
+}
+
+input[type="password"] {
+  width: 200px;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
 </style>

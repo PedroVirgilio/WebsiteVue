@@ -31,7 +31,7 @@
       <button v-if="isAdmin" class="action-button" @click="goToAdminPage">Button 3 - Admin Page</button>
       <button class="action-button" @click="goToWeatherApp">Button 4 - Weather App</button> 
       <button class="action-button" @click="goToExpenseTracker">Button 5: Expense Tracker</button>
-      <button class="action-button">Button 6</button>
+      <!--<button class="action-button">Button 6</button>-->
     </div>
   </div>
 </template>
@@ -156,7 +156,7 @@ const goToExpenseTracker = () => {
       goToTodoApp,
       goToProfile,
       goToProjectManagement,
-      goToAdminPage, // Expose goToAdminPage to the template
+      goToAdminPage, 
       goToWeatherApp,
       goToExpenseTracker,
       signOut: signOutUser,
@@ -169,7 +169,7 @@ const goToExpenseTracker = () => {
       emailInput,
       passwordInput,
       isRegistering,
-      isAdmin, // Expose isAdmin to the template
+      isAdmin, 
     };
   },
 };
@@ -221,7 +221,7 @@ const goToExpenseTracker = () => {
 }
 
 .user-info {
-  position: fixed; /* Ensure it stays in the top right corner */
+  position: fixed; 
   top: 10px; /* Adjust to top right */
   right: 10px;
   display: flex;
