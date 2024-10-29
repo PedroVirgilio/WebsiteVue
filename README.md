@@ -30,5 +30,9 @@ npm run dev
 ```sh
 npm run build
 ```
-
+### HomePage
 ![image alt](https://github.com/PedroVirgilio/WebsiteVue/blob/main/AppImg/HomePage.png?raw=true)
+
+### Profile
+![image alt](https://github.com/PedroVirgilio/WebsiteVue/blob/main/AppImg/Profile.png?raw=true)
+User is able change hes profile picture,password and delete hes account.
