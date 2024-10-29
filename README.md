@@ -49,9 +49,11 @@ Use the .env.exemple file to use your own API key,you can get one for free in ht
 
 ### ExpenseTracker
 ![image alt](https://github.com/PedroVirgilio/WebsiteVue/blob/main/AppImg/ExpenseTracker.png?raw=true)
+
 Each User have a ExpenseTracker associated to them for personal use.
 
 ### Admin
 ![image alt](https://github.com/PedroVirgilio/WebsiteVue/blob/main/AppImg/AdminPage.png?raw=true)
+
 The admin page can be accessed if the user have the admin role,in this page admins can give the admin role to other users.
 
