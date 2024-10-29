@@ -15,6 +15,9 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 ```sh
 npm install
 ```
+```
+npm install date-fns
+```
 
 ### Compile and Hot-Reload for Development
 
@@ -27,6 +30,5 @@ npm run dev
 ```sh
 npm run build
 ```
-```
-npm install date-fns
-```
+
+![image alt](https://github.com/PedroVirgilio/WebsiteVue/blob/main/AppImg/HomePage.png?raw=true)
